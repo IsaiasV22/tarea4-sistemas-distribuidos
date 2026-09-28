@@ -1,0 +1,26 @@
+# Claude
+CLAUDE.md
+
+# Course reference material (not part of the deliverable)
+docs/
+Tutorial9/
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.vite/
+
+# Env files (nunca se suben credenciales)
+.env
+.env.*
+!.env.example
+
+# Provider-specific
+.netlify/
+.vercel/
+
+# OS / editor
+.DS_Store
+*.log
