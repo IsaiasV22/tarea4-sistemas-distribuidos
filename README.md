@@ -2,8 +2,8 @@
 
 Bookstore con actualizaciones diferidas mediante RabbitMQ (CloudAMQP): libros, autores y editoriales.
 
-- **Frontend (Vercel):** `<pendiente>`
-- **Backend (Netlify Functions):** `<pendiente>`
+- **Frontend (Vercel):** https://tarea4-sistemas-distribuidos.vercel.app/
+- **Backend (Netlify Functions):** https://tarea4-sisdis-isaiasviquez.netlify.app
 
 ## Estructura
 
@@ -13,29 +13,25 @@ Bookstore con actualizaciones diferidas mediante RabbitMQ (CloudAMQP): libros, a
   - `XTasks` vacía la cola e invoca `XInsertBatch`, `XUpdateBatch` y `XDeleteBatch`, que escriben en Neon.
 - `frontend/`: SPA en Vue 3 + Vite.
 
-| Recurso | Cola | Función de tareas |
-|---|---|---|
-| Libros | `bookstore` | `bookTasks` |
-| Autores | `authors` | `authorTasks` |
-| Editoriales | `publishers` | `publisherTasks` |
+| Recurso     | Cola         | Función de tareas |
+| ----------- | ------------ | ----------------- |
+| Libros      | `bookstore`  | `bookTasks`       |
+| Autores     | `authors`    | `authorTasks`     |
+| Editoriales | `publishers` | `publisherTasks`  |
 
-## Configuración
+## Despliegue
 
-1. En CloudAMQP (Rabbit Manager → Queues), cree las colas `bookstore`, `authors` y `publishers`.
-2. En el SQL Editor de Neon, ejecute `backend/schema.sql`.
-3. En Netlify, use el directorio base `backend/` y defina las variables `DATABASE_URL` y `CLOUDAMQP_URL`.
-4. En Vercel, use el directorio raíz `frontend/` y defina `VITE_API_URL` con la URL del sitio de Netlify.
+- **Mensajería:** CloudAMQP, con las colas `bookstore`, `authors` y `publishers`.
+- **Base de datos:** Neon (Postgres). El esquema y los datos de ejemplo están en `backend/schema.sql`.
+- **Backend:** Netlify, con directorio base `backend/` y las variables de entorno `DATABASE_URL` y `CLOUDAMQP_URL`.
+- **Frontend:** Vercel, con directorio raíz `frontend/` y la variable `VITE_API_URL`, que apunta al sitio de Netlify.
 
-Para correr el frontend en local:
+## Procesamiento diferido
 
-```
-cd frontend
-npm install
-npm run dev
-```
+Las colas se procesan al invocar manualmente la función de tareas de cada recurso:
 
-Necesita un archivo `.env` con `VITE_API_URL`.
+- https://tarea4-sisdis-isaiasviquez.netlify.app/.netlify/functions/bookTasks
+- https://tarea4-sisdis-isaiasviquez.netlify.app/.netlify/functions/authorTasks
+- https://tarea4-sisdis-isaiasviquez.netlify.app/.netlify/functions/publisherTasks
 
-## Procesar la cola
-
-Abra en el navegador `https://<sitio>.netlify.app/.netlify/functions/bookTasks` (o `authorTasks`, `publisherTasks`). Responde `{"processed": N}` con la cantidad de mensajes procesados.
+Cada una responde `{"processed": N}`, donde N es la cantidad de mensajes aplicados en la base de datos.
